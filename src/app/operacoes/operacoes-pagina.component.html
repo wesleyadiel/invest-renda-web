@@ -1,0 +1,70 @@
+<section class="page">
+  <h1>Fila &amp; Cache</h1>
+  <p class="empty" style="margin-top: -0.75rem">
+    Estado ao vivo do RabbitMQ e do Redis (atualiza sozinho a cada 2s).
+    <span *ngIf="ultimaAtualizacao">Última atualização: {{ ultimaAtualizacao | date: 'HH:mm:ss' }}</span>
+  </p>
+
+  <p class="message error" *ngIf="mensagemErro">{{ mensagemErro }}</p>
+
+  <div class="card" *ngIf="statusFila as f">
+    <div class="card-header">
+      <h2>Fila de aplicações (RabbitMQ)</h2>
+      <button class="btn" type="button" (click)="atualizar()">Atualizar agora</button>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat">
+        <span class="stat-label">{{ f.aplicacoes.nome }}</span>
+        <span class="stat-value">{{ f.aplicacoes.quantidadeMensagens }}</span>
+        <span class="empty">mensagens na fila</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Consumidores ativos</span>
+        <span class="stat-value">{{ f.aplicacoes.quantidadeConsumidores }}</span>
+        <span class="empty">deveria ser 1 (o listener da API)</span>
+      </div>
+      <div class="stat" [class.warn]="f.filaMorta.quantidadeMensagens > 0">
+        <span class="stat-label">{{ f.filaMorta.nome }}</span>
+        <span class="stat-value">{{ f.filaMorta.quantidadeMensagens }}</span>
+        <span class="empty">mensagens na dead-letter queue</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" *ngIf="statusCache as c">
+    <div class="card-header">
+      <h2>Cache de produtos (Redis)</h2>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat">
+        <span class="stat-label">Listagem cacheada?</span>
+        <span class="stat-value">{{ c.listaProdutosCacheada ? 'Sim' : 'Não' }}</span>
+        <span class="empty" *ngIf="c.listaProdutosTtlSegundos != null">
+          expira em {{ c.listaProdutosTtlSegundos }}s
+        </span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Detalhes de produto em cache</span>
+        <span class="stat-value">{{ c.itensCacheProduto.length }}</span>
+        <span class="empty">chave "produto::&lt;id&gt;"</span>
+      </div>
+    </div>
+
+    <table class="table" *ngIf="c.itensCacheProduto.length">
+      <thead>
+        <tr>
+          <th>Produto (id)</th>
+          <th>TTL restante</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of c.itensCacheProduto">
+          <td class="mono">{{ item.produtoId }}</td>
+          <td>{{ item.ttlSegundos }}s</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>

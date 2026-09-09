@@ -1,0 +1,65 @@
+<section class="page">
+  <h1>Contas</h1>
+
+  <form class="card" (ngSubmit)="enviar()" #formularioConta="ngForm">
+    <div class="card-header">
+      <h2>Abrir conta</h2>
+    </div>
+
+    <div class="grid-2">
+      <label>
+        CPF (11 dígitos)
+        <input
+          class="input"
+          name="cpf"
+          [(ngModel)]="formulario.cpf"
+          required
+          pattern="\d{11}"
+          placeholder="somente números"
+        />
+      </label>
+
+      <label>
+        Nome do titular
+        <input class="input" name="nomeTitular" [(ngModel)]="formulario.nomeTitular" required minlength="3" />
+      </label>
+
+      <label>
+        Saldo inicial (R$)
+        <input class="input" type="number" step="0.01" min="0" name="saldoInicial" [(ngModel)]="formulario.saldoInicial" />
+      </label>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-primary" type="submit" [disabled]="formularioConta.invalid">Criar conta</button>
+    </div>
+
+    <p class="message error" *ngIf="mensagemErro">{{ mensagemErro }}</p>
+    <p class="message success" *ngIf="mensagemSucesso">{{ mensagemSucesso }}</p>
+  </form>
+
+  <div class="card">
+    <div class="card-header">
+      <h2>Contas cadastradas</h2>
+      <button class="btn" type="button" (click)="carregarContas()">Atualizar</button>
+    </div>
+
+    <table class="table" *ngIf="contas.length; else vazio">
+      <thead>
+        <tr>
+          <th>CPF</th>
+          <th>Titular</th>
+          <th>Saldo</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let c of contas">
+          <td class="mono">{{ c.cpf }}</td>
+          <td>{{ c.nomeTitular }}</td>
+          <td>R$ {{ c.saldo.toFixed(2) }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <ng-template #vazio><p class="empty">Nenhuma conta cadastrada ainda.</p></ng-template>
+  </div>
+</section>

@@ -1,0 +1,85 @@
+<section class="page">
+  <h1>Aplicações (compra de investimento)</h1>
+
+  <form class="card" (ngSubmit)="enviar()" #formularioAplicacao="ngForm">
+    <div class="card-header">
+      <h2>Nova aplicação</h2>
+    </div>
+
+    <div class="grid-2">
+      <label>
+        Conta (CPF)
+        <select class="input" name="cpf" [(ngModel)]="formulario.cpf" required>
+          <option value="" disabled>Selecione uma conta</option>
+          <option *ngFor="let c of contas" [value]="c.cpf">
+            {{ c.cpf }} — {{ c.nomeTitular }} (saldo R$ {{ c.saldo.toFixed(2) }})
+          </option>
+        </select>
+      </label>
+
+      <label>
+        Produto
+        <select class="input" name="produtoId" [(ngModel)]="formulario.produtoId" required>
+          <option value="" disabled>Selecione um produto</option>
+          <option *ngFor="let p of produtos" [value]="p.id">
+            {{ p.nome }} — {{ p.taxaAnual }}% a.a. (mín. R$ {{ p.investimentoMinimo.toFixed(2) }})
+          </option>
+        </select>
+      </label>
+
+      <label>
+        Valor da aplicação (R$)
+        <input class="input" type="number" step="0.01" min="0" name="valor" [(ngModel)]="formulario.valor" required />
+      </label>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-primary" type="submit" [disabled]="formularioAplicacao.invalid || enviando">
+        Aplicar
+      </button>
+      <button class="btn" type="button" (click)="carregarDadosReferencia()">Recarregar contas/produtos</button>
+    </div>
+
+    <p class="message error" *ngIf="mensagemErro">{{ mensagemErro }}</p>
+    <p class="message success" *ngIf="mensagemSucesso">{{ mensagemSucesso }}</p>
+  </form>
+
+  <div class="card">
+    <div class="card-header">
+      <h2>Aplicações</h2>
+      <button class="btn" type="button" (click)="carregarAplicacoes()">Atualizar agora</button>
+    </div>
+    <p class="empty" style="margin: -0.5rem 0 0">
+      Atualiza sozinho a cada 3s — o processamento é assíncrono via fila (RabbitMQ).
+    </p>
+
+    <table class="table" *ngIf="aplicacoes.length; else vazio">
+      <thead>
+        <tr>
+          <th>Conta</th>
+          <th>Produto</th>
+          <th>Valor</th>
+          <th>Status</th>
+          <th>Taxa aplicada</th>
+          <th>Vencimento</th>
+          <th>Criada em</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let aplicacao of aplicacoes">
+          <td class="mono">{{ aplicacao.contaCpf }}</td>
+          <td>{{ aplicacao.produtoNome }}</td>
+          <td>R$ {{ aplicacao.valor.toFixed(2) }}</td>
+          <td>
+            <span [class]="classeBadge(aplicacao.status)">{{ aplicacao.status }}</span>
+            <div class="empty" *ngIf="aplicacao.motivoFalha">{{ aplicacao.motivoFalha }}</div>
+          </td>
+          <td>{{ aplicacao.taxaAplicada != null ? aplicacao.taxaAplicada + '%' : '—' }}</td>
+          <td>{{ aplicacao.dataVencimento ?? '—' }}</td>
+          <td>{{ aplicacao.criadoEm | date: 'dd/MM/yyyy HH:mm:ss' }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <ng-template #vazio><p class="empty">Nenhuma aplicação registrada ainda.</p></ng-template>
+  </div>
+</section>

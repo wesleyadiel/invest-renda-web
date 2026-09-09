@@ -1,0 +1,94 @@
+<section class="page">
+  <h1>Produtos de renda fixa</h1>
+
+  <form class="card" (ngSubmit)="enviar()" #formularioProduto="ngForm">
+    <div class="card-header">
+      <h2>{{ editandoId ? 'Editar produto' : 'Novo produto' }}</h2>
+    </div>
+
+    <div class="grid-2">
+      <label>
+        Nome
+        <input class="input" name="nome" [(ngModel)]="formulario.nome" required minlength="3" />
+      </label>
+
+      <label>
+        Tipo
+        <select class="input" name="tipo" [(ngModel)]="formulario.tipo" required>
+          <option *ngFor="let t of tiposProduto" [value]="t">{{ t }}</option>
+        </select>
+      </label>
+
+      <label>
+        Emissor
+        <input class="input" name="emissor" [(ngModel)]="formulario.emissor" required />
+      </label>
+
+      <label>
+        Classificação do emissor
+        <input class="input" name="classificacaoEmissor" [(ngModel)]="formulario.classificacaoEmissor" required />
+      </label>
+
+      <label>
+        Taxa anual (% a.a.)
+        <input class="input" type="number" step="0.01" name="taxaAnual" [(ngModel)]="formulario.taxaAnual" required />
+      </label>
+
+      <label>
+        Valor mínimo (R$)
+        <input class="input" type="number" step="0.01" name="investimentoMinimo" [(ngModel)]="formulario.investimentoMinimo" required />
+      </label>
+
+      <label>
+        Prazo (meses)
+        <input class="input" type="number" name="prazoMeses" [(ngModel)]="formulario.prazoMeses" required />
+      </label>
+
+      <label class="checkbox">
+        <input type="checkbox" name="ativo" [(ngModel)]="formulario.ativo" />
+        Ativo
+      </label>
+    </div>
+
+    <div class="actions">
+      <button class="btn btn-primary" type="submit" [disabled]="formularioProduto.invalid">
+        {{ editandoId ? 'Salvar alterações' : 'Criar produto' }}
+      </button>
+      <button class="btn" type="button" *ngIf="editandoId" (click)="novoProduto()">Cancelar edição</button>
+    </div>
+
+    <p class="message error" *ngIf="mensagemErro">{{ mensagemErro }}</p>
+    <p class="message success" *ngIf="mensagemSucesso">{{ mensagemSucesso }}</p>
+  </form>
+
+  <div class="card">
+    <div class="card-header">
+      <h2>Produtos cadastrados</h2>
+      <button class="btn" type="button" (click)="carregarProdutos()">Atualizar</button>
+    </div>
+
+    <table class="table" *ngIf="produtos.length; else vazio">
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Tipo</th>
+          <th>Taxa a.a.</th>
+          <th>Mínimo</th>
+          <th>Prazo</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let p of produtos">
+          <td>{{ p.nome }}</td>
+          <td>{{ p.tipo }}</td>
+          <td>{{ p.taxaAnual }}%</td>
+          <td>R$ {{ p.investimentoMinimo.toFixed(2) }}</td>
+          <td>{{ p.prazoMeses }}m</td>
+          <td><button class="btn btn-small" type="button" (click)="editar(p)">Editar</button></td>
+        </tr>
+      </tbody>
+    </table>
+    <ng-template #vazio><p class="empty">Nenhum produto cadastrado ainda.</p></ng-template>
+  </div>
+</section>
