@@ -51,10 +51,11 @@
     </div>
 
     <div class="actions">
-      <button class="btn btn-primary" type="submit" [disabled]="formularioProduto.invalid">
-        {{ editandoId ? 'Salvar alterações' : 'Criar produto' }}
+      <button class="btn btn-primary" type="submit" [disabled]="formularioProduto.invalid || salvando">
+        <span class="spinner" *ngIf="salvando"></span>
+        {{ salvando ? 'Salvando...' : editandoId ? 'Salvar alterações' : 'Criar produto' }}
       </button>
-      <button class="btn" type="button" *ngIf="editandoId" (click)="novoProduto()">Cancelar edição</button>
+      <button class="btn" type="button" *ngIf="editandoId" [disabled]="salvando" (click)="novoProduto()">Cancelar edição</button>
     </div>
 
     <p class="message error" *ngIf="mensagemErro">{{ mensagemErro }}</p>
@@ -64,7 +65,10 @@
   <div class="card">
     <div class="card-header">
       <h2>Produtos cadastrados</h2>
-      <button class="btn" type="button" (click)="carregarProdutos()">Atualizar</button>
+      <button class="btn" type="button" [disabled]="carregando" (click)="carregarProdutos()">
+        <span class="spinner" *ngIf="carregando"></span>
+        {{ carregando ? 'Atualizando...' : 'Atualizar' }}
+      </button>
     </div>
 
     <table class="table" *ngIf="produtos.length; else vazio">
@@ -85,7 +89,32 @@
           <td>{{ p.taxaAnual }}%</td>
           <td>R$ {{ p.investimentoMinimo.toFixed(2) }}</td>
           <td>{{ p.prazoMeses }}m</td>
-          <td><button class="btn btn-small" type="button" (click)="editar(p)">Editar</button></td>
+          <td>
+            <div class="row-actions" *ngIf="confirmandoExclusaoId !== p.id; else confirmacao">
+              <button class="btn btn-small" type="button" [disabled]="carregandoDetalheId === p.id" (click)="editar(p)">
+                <span class="spinner" *ngIf="carregandoDetalheId === p.id"></span>
+                {{ carregandoDetalheId === p.id ? 'Abrindo...' : 'Editar' }}
+              </button>
+              <button class="btn btn-small btn-danger" type="button" (click)="pedirConfirmacaoExclusao(p)">Excluir</button>
+            </div>
+            <ng-template #confirmacao>
+              <div class="row-actions">
+                <span class="empty">Excluir "{{ p.nome }}"?</span>
+                <button
+                  class="btn btn-small btn-danger"
+                  type="button"
+                  [disabled]="excluindoId === p.id"
+                  (click)="confirmarExclusao(p)"
+                >
+                  <span class="spinner" *ngIf="excluindoId === p.id"></span>
+                  {{ excluindoId === p.id ? 'Excluindo...' : 'Confirmar' }}
+                </button>
+                <button class="btn btn-small" type="button" [disabled]="excluindoId === p.id" (click)="cancelarExclusao()">
+                  Cancelar
+                </button>
+              </div>
+            </ng-template>
+          </td>
         </tr>
       </tbody>
     </table>

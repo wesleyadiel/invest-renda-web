@@ -1,12 +1,21 @@
 <div class="app-shell">
   <header class="topbar">
-    <span class="brand">invest-renda-api — validação</span>
+    <a class="brand" routerLink="/inicio">
+      <span class="brand-mark">IR</span>
+      <span class="brand-text">
+        <strong>invest-renda</strong>
+        <small>painel de validação</small>
+      </span>
+    </a>
     <nav>
+      <a routerLink="/inicio" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Início</a>
       <a routerLink="/produtos" routerLinkActive="active">Produtos</a>
       <a routerLink="/contas" routerLinkActive="active">Contas</a>
       <a routerLink="/aplicacoes" routerLinkActive="active">Aplicações</a>
       <a routerLink="/operacoes" routerLinkActive="active">Fila &amp; Cache</a>
+      <a routerLink="/integracoes" routerLinkActive="active">Integrações</a>
     </nav>
+    <a class="swagger-link" [href]="urlSwagger" target="_blank" rel="noopener">Swagger ↗</a>
   </header>
   <main>
     <router-outlet />

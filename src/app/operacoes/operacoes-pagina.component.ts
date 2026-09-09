@@ -18,6 +18,7 @@ export class OperacoesPaginaComponent implements OnInit, OnDestroy {
   statusCache?: RespostaStatusCache;
   mensagemErro = '';
   ultimaAtualizacao?: Date;
+  atualizando = false;
 
   private assinaturaPolling?: Subscription;
 
@@ -32,14 +33,24 @@ export class OperacoesPaginaComponent implements OnInit, OnDestroy {
     this.assinaturaPolling?.unsubscribe();
   }
 
-  atualizar(): void {
+  // "manual" evita que o polling automático (a cada 2s) fique piscando o
+  // spinner do botão - só mostramos o feedback de carregamento quando o
+  // proprio usuario clica em "Atualizar agora".
+  atualizar(manual = false): void {
+    if (manual) {
+      this.atualizando = true;
+    }
     this.api.buscarStatusFila().subscribe({
       next: (status) => {
         this.statusFila = status;
         this.mensagemErro = '';
         this.ultimaAtualizacao = new Date();
+        this.atualizando = false;
       },
-      error: (err) => (this.mensagemErro = this.extrairErro(err)),
+      error: (err) => {
+        this.mensagemErro = this.extrairErro(err);
+        this.atualizando = false;
+      },
     });
     this.api.buscarStatusCache().subscribe({
       next: (status) => (this.statusCache = status),

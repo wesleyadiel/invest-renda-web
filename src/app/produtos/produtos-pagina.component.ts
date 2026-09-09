@@ -16,7 +16,11 @@ export class ProdutosPaginaComponent implements OnInit {
 
   produtos: RespostaResumoProduto[] = [];
   carregando = false;
+  salvando = false;
   editandoId: string | null = null;
+  carregandoDetalheId: string | null = null;
+  confirmandoExclusaoId: string | null = null;
+  excluindoId: string | null = null;
   mensagemErro = '';
   mensagemSucesso = '';
 
@@ -44,6 +48,7 @@ export class ProdutosPaginaComponent implements OnInit {
 
   editar(produto: RespostaResumoProduto): void {
     this.limparMensagens();
+    this.carregandoDetalheId = produto.id;
     this.api.buscarProduto(produto.id).subscribe({
       next: (detalhe) => {
         this.editandoId = detalhe.id;
@@ -57,19 +62,52 @@ export class ProdutosPaginaComponent implements OnInit {
           prazoMeses: detalhe.prazoMeses,
           ativo: detalhe.ativo,
         };
+        this.carregandoDetalheId = null;
       },
-      error: (err) => (this.mensagemErro = this.extrairErro(err)),
+      error: (err) => {
+        this.mensagemErro = this.extrairErro(err);
+        this.carregandoDetalheId = null;
+      },
     });
   }
 
   novoProduto(): void {
     this.limparMensagens();
-    this.editandoId = null;
-    this.formulario = this.formularioVazio();
+    this.resetarFormulario();
+  }
+
+  pedirConfirmacaoExclusao(produto: RespostaResumoProduto): void {
+    this.limparMensagens();
+    this.confirmandoExclusaoId = produto.id;
+  }
+
+  cancelarExclusao(): void {
+    this.confirmandoExclusaoId = null;
+  }
+
+  confirmarExclusao(produto: RespostaResumoProduto): void {
+    this.excluindoId = produto.id;
+    this.api.excluirProduto(produto.id).subscribe({
+      next: () => {
+        this.mensagemSucesso = 'Produto excluído.';
+        this.excluindoId = null;
+        this.confirmandoExclusaoId = null;
+        if (this.editandoId === produto.id) {
+          this.resetarFormulario();
+        }
+        this.carregarProdutos();
+      },
+      error: (err) => {
+        this.mensagemErro = this.extrairErro(err);
+        this.excluindoId = null;
+        this.confirmandoExclusaoId = null;
+      },
+    });
   }
 
   enviar(): void {
     this.limparMensagens();
+    this.salvando = true;
     const requisicao$ = this.editandoId
       ? this.api.atualizarProduto(this.editandoId, this.formulario)
       : this.api.criarProduto(this.formulario);
@@ -77,11 +115,20 @@ export class ProdutosPaginaComponent implements OnInit {
     requisicao$.subscribe({
       next: () => {
         this.mensagemSucesso = this.editandoId ? 'Produto atualizado.' : 'Produto criado.';
-        this.novoProduto();
+        this.salvando = false;
+        this.resetarFormulario();
         this.carregarProdutos();
       },
-      error: (err) => (this.mensagemErro = this.extrairErro(err)),
+      error: (err) => {
+        this.mensagemErro = this.extrairErro(err);
+        this.salvando = false;
+      },
     });
+  }
+
+  private resetarFormulario(): void {
+    this.editandoId = null;
+    this.formulario = this.formularioVazio();
   }
 
   private formularioVazio(): RequisicaoProduto {

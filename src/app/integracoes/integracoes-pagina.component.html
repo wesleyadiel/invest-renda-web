@@ -1,0 +1,82 @@
+<section class="page">
+  <h1>Integrações externas</h1>
+  <p class="empty" style="margin-top: -0.75rem">
+    Exemplo de chamada a uma API externa (cotação do dólar) protegida por feature toggle, retry com
+    backoff exponencial e circuit breaker (Resilience4j). Status atualiza sozinho a cada 3s.
+    <span *ngIf="ultimaAtualizacao">Última atualização: {{ ultimaAtualizacao | date: 'HH:mm:ss' }}</span>
+  </p>
+
+  <p class="message error" *ngIf="mensagemErroStatus">{{ mensagemErroStatus }}</p>
+
+  <div class="card" *ngIf="status as s">
+    <div class="card-header">
+      <h2>Status da integração</h2>
+      <button class="btn" type="button" [disabled]="atualizandoStatus" (click)="carregarStatus(true)">
+        <span class="spinner" *ngIf="atualizandoStatus"></span>
+        {{ atualizandoStatus ? 'Atualizando...' : 'Atualizar agora' }}
+      </button>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat">
+        <span class="stat-label">Estado do circuito</span>
+        <span class="stat-value"><span [class]="classeBadgeCircuito(s.estadoCircuito)">{{ s.estadoCircuito }}</span></span>
+        <span class="empty">CLOSED = normal · OPEN = falha rápida · HALF_OPEN = testando recuperação</span>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <label class="checkbox">
+        <input
+          type="checkbox"
+          [checked]="s.habilitado"
+          [disabled]="alternandoHabilitado"
+          (change)="alternarHabilitado($event)"
+        />
+        Integração habilitada (feature toggle)
+        <span class="spinner" *ngIf="alternandoHabilitado"></span>
+      </label>
+
+      <label class="checkbox">
+        <input
+          type="checkbox"
+          [checked]="s.simulandoFalha"
+          [disabled]="alternandoSimulacao"
+          (change)="alternarSimulacao($event)"
+        />
+        Simular falha na próxima consulta
+        <span class="spinner" *ngIf="alternandoSimulacao"></span>
+      </label>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h2>Cotação do dólar (AwesomeAPI)</h2>
+      <button class="btn btn-primary" type="button" [disabled]="consultando" (click)="consultarCotacao()">
+        <span class="spinner" *ngIf="consultando"></span>
+        {{ consultando ? 'Consultando...' : 'Consultar cotação' }}
+      </button>
+    </div>
+
+    <p class="empty" *ngIf="consultando">
+      Consultando — se a simulação de falha estiver ativa, isso pode levar até ~7s (3 tentativas com
+      backoff exponencial: 1s, 2s, 4s) antes de retornar erro.
+    </p>
+
+    <p class="message error" *ngIf="mensagemErroCotacao">{{ mensagemErroCotacao }}</p>
+    <p class="message success" *ngIf="mensagemSucessoCotacao">{{ mensagemSucessoCotacao }}</p>
+
+    <div class="stat-grid" *ngIf="cotacao as c">
+      <div class="stat">
+        <span class="stat-label">{{ c.par }}</span>
+        <span class="stat-value">R$ {{ c.cotacaoVenda | number: '1.4-4' }}</span>
+        <span class="empty">venda · compra R$ {{ c.cotacaoCompra | number: '1.4-4' }}</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">Consultado em</span>
+        <span class="stat-value">{{ c.consultadoEm | date: 'HH:mm:ss' }}</span>
+      </div>
+    </div>
+  </div>
+</section>

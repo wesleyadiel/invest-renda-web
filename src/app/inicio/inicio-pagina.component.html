@@ -1,0 +1,75 @@
+<section class="hero">
+  <div class="hero-blob"></div>
+  <div class="hero-text">
+    <span class="badge badge-info">Ferramenta de validação — sem login</span>
+    <h1>invest-renda-api, na prática</h1>
+    <p class="hero-subtitle">
+      Este painel existe pra você usar e enxergar, em uma interface, tudo que a API de
+      investimentos em renda fixa (CDB, LCI, LCA) faz por baixo dos panos: cadastro,
+      processamento assíncrono em fila, cache e uma chamada externa protegida por
+      circuit breaker.
+    </p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" routerLink="/produtos">Começar pelos produtos</a>
+      <a class="btn btn-ghost" [href]="urlSwagger" target="_blank" rel="noopener">Abrir Swagger da API ↗</a>
+    </div>
+  </div>
+</section>
+
+<section class="info-grid">
+  <div class="info-card">
+    <h2>O que é isso</h2>
+    <p>
+      Um front-end simples, sem autenticação, feito só pra testar e demonstrar a
+      <strong>invest-renda-api</strong> visualmente — não é um produto para clientes finais.
+    </p>
+  </div>
+  <div class="info-card">
+    <h2>Dados são reais (no seu ambiente)</h2>
+    <p>
+      Tudo que você cadastra aqui vai de verdade para o Postgres, passa pela fila do
+      RabbitMQ e pelo cache do Redis rodando na sua máquina via Docker.
+    </p>
+  </div>
+  <div class="info-card">
+    <h2>Atualiza sozinho</h2>
+    <p>
+      As telas de Aplicações, Fila &amp; Cache e Integrações fazem polling automático,
+      então dá pra ver o status mudando em tempo real sem precisar apertar nada.
+    </p>
+  </div>
+</section>
+
+<section class="fluxo">
+  <div class="section-header">
+    <h2>Fluxo de uso</h2>
+    <p>Do zero até ver uma aplicação sendo processada de ponta a ponta.</p>
+  </div>
+
+  <ol class="passos">
+    <li class="passo" *ngFor="let passo of passos">
+      <span class="passo-numero">{{ passo.numero }}</span>
+      <div class="passo-corpo">
+        <a class="passo-titulo" [routerLink]="passo.rota">{{ passo.titulo }}</a>
+        <p>{{ passo.descricao }}</p>
+      </div>
+    </li>
+  </ol>
+</section>
+
+<section class="tecnologias">
+  <div class="section-header">
+    <h2>Tecnologias usadas — e por quê</h2>
+    <p>Sem jargão: o motivo real de cada escolha, em poucas linhas.</p>
+  </div>
+
+  <div class="tecnologia-grupo" *ngFor="let grupo of tecnologias">
+    <h3>{{ grupo.titulo }}</h3>
+    <div class="tecnologia-cards">
+      <div class="tecnologia-card" *ngFor="let tech of grupo.itens">
+        <h4>{{ tech.nome }}</h4>
+        <p>{{ tech.porque }}</p>
+      </div>
+    </div>
+  </div>
+</section>

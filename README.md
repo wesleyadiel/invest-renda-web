@@ -6,17 +6,23 @@ produto — é uma ferramenta de QA/demonstração.
 
 ## O que dá para fazer aqui
 
-- **Produtos**: cadastrar, editar, listar e ver detalhe (`/products`).
-- **Contas**: abrir conta por CPF com saldo inicial, listar contas e saldos
-  (`/accounts`).
+- **Produtos**: cadastrar, editar, excluir, listar e ver detalhe (`/produtos`).
+- **Contas**: abrir conta por CPF com saldo inicial, listar, excluir e ver
+  saldos (`/contas`). Excluir produto/conta com aplicações associadas é
+  bloqueado pela API (422).
 - **Aplicações**: aplicar em um produto e acompanhar o status
-  (`PENDING` → `COMPLETED`/`FAILED`) evoluindo em tempo real — o
+  (`PENDENTE` → `CONCLUIDA`/`FALHOU`) evoluindo em tempo real — o
   processamento é assíncrono via fila, a tela atualiza sozinha a cada 3s
-  (`/applications`).
+  (`/aplicacoes`).
 - **Fila & Cache**: estado ao vivo do RabbitMQ (mensagens na fila de
   aplicações e na dead-letter queue, consumidores ativos) e do Redis
   (produto/lista em cache e TTL restante), atualizando a cada 2s
-  (`/ops`).
+  (`/operacoes`).
+- **Integrações externas**: consulta sob demanda à cotação do dólar
+  (chamada de exemplo protegida por Resilience4j), com dois toggles ao
+  vivo — ligar/desligar a integração e forçar falha na próxima consulta —
+  e o estado do circuit breaker (`CLOSED`/`OPEN`/`HALF_OPEN`), atualizando
+  a cada 3s (`/integracoes`).
 
 ## Rodando
 
@@ -37,8 +43,12 @@ npx ng serve --port 4201
 ```
 
 A API já libera CORS para qualquer porta `localhost` (ver
-`WebCorsConfig` na API), então não precisa reconfigurar nada ao trocar de
+`ConfiguracaoCors` na API), então não precisa reconfigurar nada ao trocar de
 porta.
+
+Documentação interativa de todos os endpoints da API (Swagger UI):
+`http://localhost:8080/swagger-ui.html` — também acessível pelo link
+"Swagger ↗" no topo de qualquer tela deste app.
 
 ## Stack
 

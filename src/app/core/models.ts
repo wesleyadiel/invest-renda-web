@@ -85,6 +85,25 @@ export interface RespostaStatusCache {
   itensCacheProduto: ItemCacheProduto[];
 }
 
+export interface RespostaCotacaoDolar {
+  par: string;
+  cotacaoCompra: number;
+  cotacaoVenda: number;
+  consultadoEm: string;
+}
+
+export type EstadoCircuito = 'CLOSED' | 'OPEN' | 'HALF_OPEN';
+
+export interface StatusIntegracaoExterna {
+  habilitado: boolean;
+  simulandoFalha: boolean;
+  estadoCircuito: EstadoCircuito;
+}
+
+export interface RequisicaoToggleIntegracao {
+  ativo: boolean;
+}
+
 // Envelope padrao de toda resposta da API (sucesso ou erro).
 export interface RespostaApi<T> {
   sucesso: boolean;

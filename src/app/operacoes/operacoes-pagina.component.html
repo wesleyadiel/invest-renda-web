@@ -10,7 +10,10 @@
   <div class="card" *ngIf="statusFila as f">
     <div class="card-header">
       <h2>Fila de aplicações (RabbitMQ)</h2>
-      <button class="btn" type="button" (click)="atualizar()">Atualizar agora</button>
+      <button class="btn" type="button" [disabled]="atualizando" (click)="atualizar(true)">
+        <span class="spinner" *ngIf="atualizando"></span>
+        {{ atualizando ? 'Atualizando...' : 'Atualizar agora' }}
+      </button>
     </div>
 
     <div class="stat-grid">

@@ -35,9 +35,13 @@
 
     <div class="actions">
       <button class="btn btn-primary" type="submit" [disabled]="formularioAplicacao.invalid || enviando">
-        Aplicar
+        <span class="spinner" *ngIf="enviando"></span>
+        {{ enviando ? 'Aplicando...' : 'Aplicar' }}
       </button>
-      <button class="btn" type="button" (click)="carregarDadosReferencia()">Recarregar contas/produtos</button>
+      <button class="btn" type="button" [disabled]="atualizandoReferencias" (click)="carregarDadosReferencia()">
+        <span class="spinner" *ngIf="atualizandoReferencias"></span>
+        {{ atualizandoReferencias ? 'Recarregando...' : 'Recarregar contas/produtos' }}
+      </button>
     </div>
 
     <p class="message error" *ngIf="mensagemErro">{{ mensagemErro }}</p>
@@ -47,7 +51,10 @@
   <div class="card">
     <div class="card-header">
       <h2>Aplicações</h2>
-      <button class="btn" type="button" (click)="carregarAplicacoes()">Atualizar agora</button>
+      <button class="btn" type="button" [disabled]="atualizandoLista" (click)="carregarAplicacoes(true)">
+        <span class="spinner" *ngIf="atualizandoLista"></span>
+        {{ atualizandoLista ? 'Atualizando...' : 'Atualizar agora' }}
+      </button>
     </div>
     <p class="empty" style="margin: -0.5rem 0 0">
       Atualiza sozinho a cada 3s — o processamento é assíncrono via fila (RabbitMQ).

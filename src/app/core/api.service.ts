@@ -14,6 +14,8 @@ import {
   RespostaDetalheProduto,
   RequisicaoProduto,
   RespostaResumoProduto,
+  RespostaCotacaoDolar,
+  StatusIntegracaoExterna,
 } from './models';
 
 /**
@@ -47,6 +49,10 @@ export class ApiService {
     return this.desembrulhar(this.http.put<RespostaApi<RespostaDetalheProduto>>(`${API_BASE_URL}/produtos/${id}`, payload));
   }
 
+  excluirProduto(id: string): Observable<void> {
+    return this.desembrulhar(this.http.delete<RespostaApi<void>>(`${API_BASE_URL}/produtos/${id}`));
+  }
+
   // Contas
   listarContas(): Observable<RespostaConta[]> {
     return this.desembrulhar(this.http.get<RespostaApi<RespostaConta[]>>(`${API_BASE_URL}/contas`));
@@ -54,6 +60,10 @@ export class ApiService {
 
   buscarContaPorCpf(cpf: string): Observable<RespostaConta> {
     return this.desembrulhar(this.http.get<RespostaApi<RespostaConta>>(`${API_BASE_URL}/contas/${cpf}`));
+  }
+
+  excluirConta(cpf: string): Observable<void> {
+    return this.desembrulhar(this.http.delete<RespostaApi<void>>(`${API_BASE_URL}/contas/${cpf}`));
   }
 
   criarConta(payload: RequisicaoConta): Observable<RespostaConta> {
@@ -76,5 +86,26 @@ export class ApiService {
 
   buscarStatusCache(): Observable<RespostaStatusCache> {
     return this.desembrulhar(this.http.get<RespostaApi<RespostaStatusCache>>(`${API_BASE_URL}/operacoes/cache`));
+  }
+
+  // Integracao externa (cotacao do dolar - feature toggle + retry/circuit breaker)
+  consultarCotacaoDolar(): Observable<RespostaCotacaoDolar> {
+    return this.desembrulhar(this.http.get<RespostaApi<RespostaCotacaoDolar>>(`${API_BASE_URL}/integracoes/cotacao-dolar`));
+  }
+
+  buscarStatusIntegracaoExterna(): Observable<StatusIntegracaoExterna> {
+    return this.desembrulhar(this.http.get<RespostaApi<StatusIntegracaoExterna>>(`${API_BASE_URL}/integracoes/status`));
+  }
+
+  habilitarIntegracaoExterna(ativo: boolean): Observable<StatusIntegracaoExterna> {
+    return this.desembrulhar(
+      this.http.put<RespostaApi<StatusIntegracaoExterna>>(`${API_BASE_URL}/integracoes/habilitar`, { ativo }),
+    );
+  }
+
+  simularFalhaIntegracaoExterna(ativo: boolean): Observable<StatusIntegracaoExterna> {
+    return this.desembrulhar(
+      this.http.put<RespostaApi<StatusIntegracaoExterna>>(`${API_BASE_URL}/integracoes/simular-falha`, { ativo }),
+    );
   }
 }

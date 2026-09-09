@@ -20,6 +20,8 @@ export class AplicacoesPaginaComponent implements OnInit, OnDestroy {
   produtos: RespostaResumoProduto[] = [];
 
   enviando = false;
+  atualizandoLista = false;
+  atualizandoReferencias = false;
   mensagemErro = '';
   mensagemSucesso = '';
 
@@ -42,14 +44,40 @@ export class AplicacoesPaginaComponent implements OnInit, OnDestroy {
   }
 
   carregarDadosReferencia(): void {
-    this.api.listarContas().subscribe((contas) => (this.contas = contas));
-    this.api.listarProdutos().subscribe((produtos) => (this.produtos = produtos));
+    this.atualizandoReferencias = true;
+    let pendentes = 2;
+    const concluiuUma = () => {
+      pendentes -= 1;
+      if (pendentes === 0) {
+        this.atualizandoReferencias = false;
+      }
+    };
+    this.api.listarContas().subscribe((contas) => {
+      this.contas = contas;
+      concluiuUma();
+    });
+    this.api.listarProdutos().subscribe((produtos) => {
+      this.produtos = produtos;
+      concluiuUma();
+    });
   }
 
-  carregarAplicacoes(): void {
+  // "manual" evita que o polling automático (a cada 3s) fique piscando o
+  // spinner do botão - só mostramos o feedback de carregamento quando o
+  // proprio usuario clica em "Atualizar agora".
+  carregarAplicacoes(manual = false): void {
+    if (manual) {
+      this.atualizandoLista = true;
+    }
     this.api.listarAplicacoes().subscribe({
-      next: (aplicacoes) => (this.aplicacoes = aplicacoes),
-      error: (err) => (this.mensagemErro = this.extrairErro(err)),
+      next: (aplicacoes) => {
+        this.aplicacoes = aplicacoes;
+        this.atualizandoLista = false;
+      },
+      error: (err) => {
+        this.mensagemErro = this.extrairErro(err);
+        this.atualizandoLista = false;
+      },
     });
   }
 

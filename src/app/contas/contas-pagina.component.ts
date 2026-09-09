@@ -14,6 +14,9 @@ import { RespostaConta, RequisicaoConta } from '../core/models';
 export class ContasPaginaComponent implements OnInit {
   contas: RespostaConta[] = [];
   carregando = false;
+  salvando = false;
+  confirmandoExclusaoCpf: string | null = null;
+  excluindoCpf: string | null = null;
   mensagemErro = '';
   mensagemSucesso = '';
 
@@ -41,13 +44,44 @@ export class ContasPaginaComponent implements OnInit {
 
   enviar(): void {
     this.limparMensagens();
+    this.salvando = true;
     this.api.criarConta(this.formulario).subscribe({
       next: (conta) => {
         this.mensagemSucesso = `Conta criada para o CPF ${conta.cpf}.`;
+        this.salvando = false;
         this.formulario = this.formularioVazio();
         this.carregarContas();
       },
-      error: (err) => (this.mensagemErro = this.extrairErro(err)),
+      error: (err) => {
+        this.mensagemErro = this.extrairErro(err);
+        this.salvando = false;
+      },
+    });
+  }
+
+  pedirConfirmacaoExclusao(conta: RespostaConta): void {
+    this.limparMensagens();
+    this.confirmandoExclusaoCpf = conta.cpf;
+  }
+
+  cancelarExclusao(): void {
+    this.confirmandoExclusaoCpf = null;
+  }
+
+  confirmarExclusao(conta: RespostaConta): void {
+    this.excluindoCpf = conta.cpf;
+    this.api.excluirConta(conta.cpf).subscribe({
+      next: () => {
+        this.mensagemSucesso = 'Conta excluída.';
+        this.excluindoCpf = null;
+        this.confirmandoExclusaoCpf = null;
+        this.carregarContas();
+      },
+      error: (err) => {
+        this.mensagemErro = this.extrairErro(err);
+        this.excluindoCpf = null;
+        this.confirmandoExclusaoCpf = null;
+      },
     });
   }
 
