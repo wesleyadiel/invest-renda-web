@@ -27,16 +27,36 @@ produto — é uma ferramenta de QA/demonstração.
 ## Rodando
 
 Pré-requisito: a `invest-renda-api` rodando e acessível (local via
-`docker/run.sh` ou `mvn spring-boot:run` — ver `.specs/local-development.md`
+`./run.sh` ou `mvn spring-boot:run` — ver `.specs/local-development.md`
 no projeto da API). A URL da API é configurada em
 `src/app/core/api-config.ts` (default `http://localhost:8080`).
+
+### Opção rápida — via Docker
+
+Só precisa de **Docker** instalado, nem Node nem Angular CLI:
+
+```bash
+./run.sh
+```
+
+Builda a imagem (Node compila, Nginx serve os arquivos estáticos) e sobe o
+container. Ao final, o app está em `http://localhost:4200`.
+
+```bash
+./run.sh status   # estado atual do container
+./run.sh logs     # acompanhar os logs do nginx
+./run.sh down     # derrubar o container
+```
+
+### Opção para desenvolvimento — com hot reload
 
 ```bash
 npm install
 npm start          # ng serve — abre em http://localhost:4200
 ```
 
-Se a porta 4200 já estiver em uso por outro projeto seu, suba em outra:
+Se a porta 4200 já estiver em uso por outro projeto seu (ou pelo container
+Docker acima), suba em outra:
 
 ```bash
 npx ng serve --port 4201
