@@ -17,6 +17,9 @@ export class ContasPaginaComponent implements OnInit {
   salvando = false;
   confirmandoExclusaoCpf: string | null = null;
   excluindoCpf: string | null = null;
+  depositandoCpf: string | null = null;
+  processandoDepositoCpf: string | null = null;
+  valorDeposito: number | null = null;
   mensagemErro = '';
   mensagemSucesso = '';
 
@@ -81,6 +84,37 @@ export class ContasPaginaComponent implements OnInit {
         this.mensagemErro = this.extrairErro(err);
         this.excluindoCpf = null;
         this.confirmandoExclusaoCpf = null;
+      },
+    });
+  }
+
+  abrirDeposito(conta: RespostaConta): void {
+    this.limparMensagens();
+    this.depositandoCpf = conta.cpf;
+    this.valorDeposito = null;
+  }
+
+  cancelarDeposito(): void {
+    this.depositandoCpf = null;
+    this.valorDeposito = null;
+  }
+
+  confirmarDeposito(conta: RespostaConta): void {
+    if (!this.valorDeposito || this.valorDeposito <= 0) {
+      return;
+    }
+    this.processandoDepositoCpf = conta.cpf;
+    this.api.depositarConta(conta.cpf, { valor: this.valorDeposito }).subscribe({
+      next: (contaAtualizada) => {
+        this.mensagemSucesso = `Depósito de R$ ${this.valorDeposito!.toFixed(2)} realizado. Novo saldo: R$ ${contaAtualizada.saldo.toFixed(2)}.`;
+        this.processandoDepositoCpf = null;
+        this.depositandoCpf = null;
+        this.valorDeposito = null;
+        this.carregarContas();
+      },
+      error: (err) => {
+        this.mensagemErro = this.extrairErro(err);
+        this.processandoDepositoCpf = null;
       },
     });
   }

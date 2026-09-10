@@ -33,6 +33,72 @@
         <span class="empty">mensagens na dead-letter queue</span>
       </div>
     </div>
+
+    <label class="checkbox">
+      <input
+        type="checkbox"
+        [checked]="f.simulandoFalha"
+        [disabled]="alternandoSimulacaoFila"
+        (change)="alternarSimulacaoFila($event)"
+      />
+      Simular falha no processamento da fila
+      <span class="spinner" *ngIf="alternandoSimulacaoFila"></span>
+    </label>
+    <p class="empty" *ngIf="f.simulandoFalha">
+      Ativo — toda mensagem consumida falha antes de tocar o banco. Publique uma aplicação
+      (tela Aplicações) e acompanhe o retry (3 tentativas, 1s/2s/4s) e a mensagem caindo na DLQ abaixo.
+    </p>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <h2>Dead-letter queue — mensagens presas</h2>
+    </div>
+
+    <p class="message error" *ngIf="mensagemErroDlq">{{ mensagemErroDlq }}</p>
+    <p class="message success" *ngIf="mensagemSucessoDlq">{{ mensagemSucessoDlq }}</p>
+    <p class="empty" *ngIf="!dlq.length">Nenhuma mensagem presa na DLQ no momento.</p>
+
+    <table class="table" *ngIf="dlq.length">
+      <thead>
+        <tr>
+          <th>Aplicação</th>
+          <th>Conta</th>
+          <th>Produto</th>
+          <th>Valor original</th>
+          <th>Novo valor (opcional)</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of dlq; trackBy: trackByAplicacaoId">
+          <td class="mono">{{ item.aplicacaoId }}</td>
+          <td class="mono">{{ item.contaId }}</td>
+          <td class="mono">{{ item.produtoId }}</td>
+          <td>{{ item.valor | number: '1.2-2' }}</td>
+          <td>
+            <input
+              class="input"
+              type="number"
+              step="0.01"
+              min="0.01"
+              [placeholder]="item.valor"
+              [(ngModel)]="novosValores[item.aplicacaoId]"
+            />
+          </td>
+          <td>
+            <button
+              class="btn btn-primary btn-small"
+              type="button"
+              [disabled]="reprocessando[item.aplicacaoId]"
+              (click)="reprocessar(item)"
+            >
+              {{ reprocessando[item.aplicacaoId] ? 'Reprocessando...' : 'Reprocessar' }}
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
   </div>
 
   <div class="card" *ngIf="statusCache as c">

@@ -65,26 +65,55 @@
           <td>{{ c.nomeTitular }}</td>
           <td>R$ {{ c.saldo.toFixed(2) }}</td>
           <td>
-            <div class="row-actions" *ngIf="confirmandoExclusaoCpf !== c.cpf; else confirmacao">
+            <div class="row-actions" *ngIf="depositandoCpf === c.cpf">
+              <input
+                class="input"
+                type="number"
+                step="0.01"
+                min="0.01"
+                placeholder="valor"
+                [(ngModel)]="valorDeposito"
+                name="valorDeposito"
+              />
+              <button
+                class="btn btn-small btn-primary"
+                type="button"
+                [disabled]="!valorDeposito || valorDeposito <= 0 || processandoDepositoCpf === c.cpf"
+                (click)="confirmarDeposito(c)"
+              >
+                <span class="spinner" *ngIf="processandoDepositoCpf === c.cpf"></span>
+                {{ processandoDepositoCpf === c.cpf ? 'Depositando...' : 'Confirmar' }}
+              </button>
+              <button
+                class="btn btn-small"
+                type="button"
+                [disabled]="processandoDepositoCpf === c.cpf"
+                (click)="cancelarDeposito()"
+              >
+                Cancelar
+              </button>
+            </div>
+
+            <div class="row-actions" *ngIf="depositandoCpf !== c.cpf && confirmandoExclusaoCpf !== c.cpf">
+              <button class="btn btn-small btn-primary" type="button" (click)="abrirDeposito(c)">Depositar</button>
               <button class="btn btn-small btn-danger" type="button" (click)="pedirConfirmacaoExclusao(c)">Excluir</button>
             </div>
-            <ng-template #confirmacao>
-              <div class="row-actions">
-                <span class="empty">Excluir esta conta?</span>
-                <button
-                  class="btn btn-small btn-danger"
-                  type="button"
-                  [disabled]="excluindoCpf === c.cpf"
-                  (click)="confirmarExclusao(c)"
-                >
-                  <span class="spinner" *ngIf="excluindoCpf === c.cpf"></span>
-                  {{ excluindoCpf === c.cpf ? 'Excluindo...' : 'Confirmar' }}
-                </button>
-                <button class="btn btn-small" type="button" [disabled]="excluindoCpf === c.cpf" (click)="cancelarExclusao()">
-                  Cancelar
-                </button>
-              </div>
-            </ng-template>
+
+            <div class="row-actions" *ngIf="confirmandoExclusaoCpf === c.cpf">
+              <span class="empty">Excluir esta conta?</span>
+              <button
+                class="btn btn-small btn-danger"
+                type="button"
+                [disabled]="excluindoCpf === c.cpf"
+                (click)="confirmarExclusao(c)"
+              >
+                <span class="spinner" *ngIf="excluindoCpf === c.cpf"></span>
+                {{ excluindoCpf === c.cpf ? 'Excluindo...' : 'Confirmar' }}
+              </button>
+              <button class="btn btn-small" type="button" [disabled]="excluindoCpf === c.cpf" (click)="cancelarExclusao()">
+                Cancelar
+              </button>
+            </div>
           </td>
         </tr>
       </tbody>

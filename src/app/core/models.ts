@@ -42,6 +42,10 @@ export interface RespostaConta {
   saldo: number;
 }
 
+export interface RequisicaoDeposito {
+  valor: number;
+}
+
 export interface RequisicaoAplicacao {
   cpf: string;
   produtoId: string;
@@ -72,6 +76,19 @@ export interface StatusFila {
 export interface RespostaStatusFila {
   aplicacoes: StatusFila;
   filaMorta: StatusFila;
+  simulandoFalha: boolean;
+}
+
+export interface ItemFilaMorta {
+  aplicacaoId: string;
+  contaId: string;
+  produtoId: string;
+  valor: number;
+}
+
+export interface RequisicaoReprocessarDlq {
+  aplicacaoId: string;
+  novoValor?: number;
 }
 
 export interface ItemCacheProduto {

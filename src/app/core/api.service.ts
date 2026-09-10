@@ -16,6 +16,9 @@ import {
   RespostaResumoProduto,
   RespostaCotacaoDolar,
   StatusIntegracaoExterna,
+  ItemFilaMorta,
+  RequisicaoReprocessarDlq,
+  RequisicaoDeposito,
 } from './models';
 
 /**
@@ -70,6 +73,10 @@ export class ApiService {
     return this.desembrulhar(this.http.post<RespostaApi<RespostaConta>>(`${API_BASE_URL}/contas`, payload));
   }
 
+  depositarConta(cpf: string, payload: RequisicaoDeposito): Observable<RespostaConta> {
+    return this.desembrulhar(this.http.post<RespostaApi<RespostaConta>>(`${API_BASE_URL}/contas/${cpf}/depositar`, payload));
+  }
+
   // Aplicacoes
   listarAplicacoes(): Observable<RespostaAplicacao[]> {
     return this.desembrulhar(this.http.get<RespostaApi<RespostaAplicacao[]>>(`${API_BASE_URL}/aplicacoes`));
@@ -82,6 +89,20 @@ export class ApiService {
   // Observabilidade
   buscarStatusFila(): Observable<RespostaStatusFila> {
     return this.desembrulhar(this.http.get<RespostaApi<RespostaStatusFila>>(`${API_BASE_URL}/operacoes/fila`));
+  }
+
+  simularFalhaFila(ativo: boolean): Observable<RespostaStatusFila> {
+    return this.desembrulhar(
+      this.http.put<RespostaApi<RespostaStatusFila>>(`${API_BASE_URL}/operacoes/fila/simular-falha`, { ativo }),
+    );
+  }
+
+  listarDlq(): Observable<ItemFilaMorta[]> {
+    return this.desembrulhar(this.http.get<RespostaApi<ItemFilaMorta[]>>(`${API_BASE_URL}/operacoes/fila/dlq`));
+  }
+
+  reprocessarDlq(payload: RequisicaoReprocessarDlq): Observable<void> {
+    return this.desembrulhar(this.http.post<RespostaApi<void>>(`${API_BASE_URL}/operacoes/fila/dlq/reprocessar`, payload));
   }
 
   buscarStatusCache(): Observable<RespostaStatusCache> {
