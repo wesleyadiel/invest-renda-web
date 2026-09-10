@@ -1,0 +1,29 @@
+<section class="page">
+  <h1>Logs ao vivo</h1>
+  <p class="empty" style="margin-top: -0.75rem">
+    Stream em tempo real via SSE (GET /operacoes/logs/stream) - JSON estruturado da API, sem persistência.
+    <span [class]="conectado ? 'badge badge-completed' : 'badge badge-failed'">
+      {{ conectado ? 'Conectado' : 'Desconectado' }}
+    </span>
+  </p>
+
+  <div class="card">
+    <div class="card-header">
+      <h2>Console ({{ linhasFiltradas.length }}/{{ linhas.length }})</h2>
+      <div class="row-actions">
+        <input class="input" type="text" placeholder="Filtrar (mensagem, campo, valor...)" [(ngModel)]="filtro" />
+        <button class="btn btn-small" type="button" (click)="limpar()">Limpar</button>
+      </div>
+    </div>
+
+    <div class="log-console" #console>
+      <p class="empty" *ngIf="!linhasFiltradas.length">Nenhuma linha ainda - qualquer requisição na API vai aparecer aqui.</p>
+      <div class="log-linha" *ngFor="let linha of linhasFiltradas" [ngClass]="classeNivel(linha.level)">
+        <span class="log-hora">{{ linha.timestamp | slice: 11 : 23 }}</span>
+        <span class="log-nivel">{{ linha.level }}</span>
+        <span class="log-logger">{{ linha.logger }}</span>
+        <span class="log-mensagem">{{ linha.message }}</span>
+      </div>
+    </div>
+  </div>
+</section>

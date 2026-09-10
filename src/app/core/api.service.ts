@@ -35,7 +35,6 @@ export class ApiService {
     return resposta$.pipe(map((resposta) => resposta.dados as T));
   }
 
-  // Produtos
   listarProdutos(): Observable<RespostaResumoProduto[]> {
     return this.desembrulhar(this.http.get<RespostaApi<RespostaResumoProduto[]>>(`${API_BASE_URL}/produtos`));
   }
@@ -56,7 +55,6 @@ export class ApiService {
     return this.desembrulhar(this.http.delete<RespostaApi<void>>(`${API_BASE_URL}/produtos/${id}`));
   }
 
-  // Contas
   listarContas(): Observable<RespostaConta[]> {
     return this.desembrulhar(this.http.get<RespostaApi<RespostaConta[]>>(`${API_BASE_URL}/contas`));
   }
@@ -77,7 +75,6 @@ export class ApiService {
     return this.desembrulhar(this.http.post<RespostaApi<RespostaConta>>(`${API_BASE_URL}/contas/${cpf}/depositar`, payload));
   }
 
-  // Aplicacoes
   listarAplicacoes(): Observable<RespostaAplicacao[]> {
     return this.desembrulhar(this.http.get<RespostaApi<RespostaAplicacao[]>>(`${API_BASE_URL}/aplicacoes`));
   }
@@ -86,7 +83,6 @@ export class ApiService {
     return this.desembrulhar(this.http.post<RespostaApi<RespostaAplicacao>>(`${API_BASE_URL}/aplicacoes`, payload));
   }
 
-  // Observabilidade
   buscarStatusFila(): Observable<RespostaStatusFila> {
     return this.desembrulhar(this.http.get<RespostaApi<RespostaStatusFila>>(`${API_BASE_URL}/operacoes/fila`));
   }
@@ -109,7 +105,6 @@ export class ApiService {
     return this.desembrulhar(this.http.get<RespostaApi<RespostaStatusCache>>(`${API_BASE_URL}/operacoes/cache`));
   }
 
-  // Integracao externa (cotacao do dolar - feature toggle + retry/circuit breaker)
   consultarCotacaoDolar(): Observable<RespostaCotacaoDolar> {
     return this.desembrulhar(this.http.get<RespostaApi<RespostaCotacaoDolar>>(`${API_BASE_URL}/integracoes/cotacao-dolar`));
   }

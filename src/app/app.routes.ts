@@ -5,6 +5,7 @@ import { ContasPaginaComponent } from './contas/contas-pagina.component';
 import { AplicacoesPaginaComponent } from './aplicacoes/aplicacoes-pagina.component';
 import { OperacoesPaginaComponent } from './operacoes/operacoes-pagina.component';
 import { IntegracoesPaginaComponent } from './integracoes/integracoes-pagina.component';
+import { LogsPaginaComponent } from './logs/logs-pagina.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'inicio', pathMatch: 'full' },
@@ -14,5 +15,6 @@ export const routes: Routes = [
   { path: 'aplicacoes', component: AplicacoesPaginaComponent },
   { path: 'operacoes', component: OperacoesPaginaComponent },
   { path: 'integracoes', component: IntegracoesPaginaComponent },
+  { path: 'logs', component: LogsPaginaComponent },
   { path: '**', redirectTo: 'inicio' },
 ];

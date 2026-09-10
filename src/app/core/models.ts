@@ -121,10 +121,17 @@ export interface RequisicaoToggleIntegracao {
   ativo: boolean;
 }
 
-// Envelope padrao de toda resposta da API (sucesso ou erro).
 export interface RespostaApi<T> {
   sucesso: boolean;
   dados: T | null;
   mensagem: string;
   erros: string[];
+}
+
+export interface LinhaLog {
+  timestamp: string;
+  level: string;
+  logger: string;
+  message: string;
+  [campo: string]: unknown;
 }

@@ -1,0 +1,59 @@
+.log-console {
+  max-height: 65vh;
+  overflow-y: auto;
+  background: var(--color-ink-navy);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 0.8rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.log-linha {
+  display: flex;
+  gap: 0.6rem;
+  padding: 0.15rem 0;
+  color: #d7e3f0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.log-hora {
+  color: #8fa6c2;
+  flex-shrink: 0;
+}
+
+.log-nivel {
+  flex-shrink: 0;
+  width: 4.5em;
+  font-weight: 700;
+}
+
+.log-logger {
+  color: #8fa6c2;
+  flex-shrink: 0;
+}
+
+.log-mensagem {
+  color: #f2f6fb;
+}
+
+.nivel-info .log-nivel {
+  color: var(--color-sky-cyan);
+}
+
+.nivel-warn .log-nivel {
+  color: #fbbf24;
+}
+
+.nivel-error .log-nivel,
+.nivel-error .log-mensagem {
+  color: #fca5a5;
+}
+
+.nivel-debug .log-nivel {
+  color: #9ca3af;
+}
